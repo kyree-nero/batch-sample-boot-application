@@ -1,0 +1,23 @@
+This is a sample spring boot batch project
+
+The following technologies are used 
+-Spring Batch
+-Stax
+
+Note: spring batch admin is deprecated so for the  
+ease of this example I've made exposed endoints to control the jobs
+
+check the job status with this
+http://localhost:8080/app/batch/status/{id}
+
+start the job
+http://localhost:8080/app/batch/simplebatchjob/start
+http://localhost:8080/app/batch/simplepartitioningbatchjob/start
+http://localhost:8080/app/batch/simpleremotepartitioningbatchjob/start
+
+Note.  to do the remote partition job both the master and slave binary need to be deployed to a container with a separate 
+context root so they do not collide.
+The test data also needs to be in the table (see the .sql files in test)
+
+Note.   This uses activemq (standalone) on its default port for the run time to work.  You need to setup one queue called batchQueue.  
+In test nothing is needed.
