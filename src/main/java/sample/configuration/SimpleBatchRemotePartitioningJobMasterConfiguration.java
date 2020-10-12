@@ -7,6 +7,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.integration.partition.MessageChannelPartitionHandler;
@@ -15,6 +16,7 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -107,5 +109,27 @@ public class SimpleBatchRemotePartitioningJobMasterConfiguration {
 				.start(simplePartitioningBatchJobCleanStep)
 				.next(simpleRemotePartitioningBatchJobPartitionStep)
 				.build();
+	}
+	
+	
+	@Bean @StepScope public ItemProcessor<SimpleRemotePartitioningBatchJobObject, SimpleRemotePartitioningBatchJobOutputObject> itemProcessor(
+			@Value("#{stepExecutionContext[fromId]}") String startId
+			
+	){
+		return new ItemProcessor<SimpleRemotePartitioningBatchJobObject, SimpleRemotePartitioningBatchJobOutputObject>(){
+			
+			@Override
+			public SimpleRemotePartitioningBatchJobOutputObject process(SimpleRemotePartitioningBatchJobObject item)
+					throws Exception {
+				SimpleRemotePartitioningBatchJobOutputObject obj = new SimpleRemotePartitioningBatchJobOutputObject();
+				obj.setId(item.getId());
+				obj.setContent(item.getContent());
+				obj.setRunGroupName(executorId());
+				System.out.println("id " + obj.getId() + " | content " + obj.getContent() + " | runId " + obj.getRunGroupName());
+				Thread.sleep(100);
+				return obj;
+			}
+			
+		};
 	}
 }

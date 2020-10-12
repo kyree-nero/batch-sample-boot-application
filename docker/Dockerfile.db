@@ -1,0 +1,11 @@
+FROM mysql:8.0.15
+MAINTAINER kyree
+
+RUN apt-get update \
+  && apt-get install -y vim psmisc
+
+COPY docker/db.sql /docker-entrypoint-initdb.d/db.sql
+
+ENV MYSQL_ROOT_PASSWORD password
+
+RUN /entrypoint.sh mysqld & sleep 30 && killall mysqld

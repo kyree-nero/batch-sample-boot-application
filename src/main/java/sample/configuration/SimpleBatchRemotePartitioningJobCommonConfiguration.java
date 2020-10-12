@@ -32,7 +32,7 @@ import sample.batch.domain.SimpleRemotePartitioningBatchJobOutputObject;
 public class SimpleBatchRemotePartitioningJobCommonConfiguration {
 	@Autowired StepBuilderFactory stepBuilderFactory;
 	@Autowired DataSource dataSource;
-	@Autowired @Qualifier("executorId") String executorId;
+	//@Autowired @Qualifier("executorId") String executorId;
 	
 	@Bean protected Step simpleBatchRemotePartitioningJobStep(
 			ItemReader<SimpleRemotePartitioningBatchJobObject> reader, 
@@ -71,26 +71,26 @@ public class SimpleBatchRemotePartitioningJobCommonConfiguration {
 		return bean;
 	}
 	
-	@Bean @StepScope public ItemProcessor<SimpleRemotePartitioningBatchJobObject, SimpleRemotePartitioningBatchJobOutputObject> itemProcessor(
-			@Value("#{stepExecutionContext[fromId]}") String startId
-			
-	){
-		return new ItemProcessor<SimpleRemotePartitioningBatchJobObject, SimpleRemotePartitioningBatchJobOutputObject>(){
-			
-			@Override
-			public SimpleRemotePartitioningBatchJobOutputObject process(SimpleRemotePartitioningBatchJobObject item)
-					throws Exception {
-				SimpleRemotePartitioningBatchJobOutputObject obj = new SimpleRemotePartitioningBatchJobOutputObject();
-				obj.setId(item.getId());
-				obj.setContent(item.getContent());
-				obj.setRunGroupName(executorId);
-				System.out.println("id " + obj.getId() + " | content " + obj.getContent() + " | runId " + obj.getRunGroupName());
-				Thread.sleep(100);
-				return obj;
-			}
-			
-		};
-	}
+//	@Bean @StepScope public ItemProcessor<SimpleRemotePartitioningBatchJobObject, SimpleRemotePartitioningBatchJobOutputObject> itemProcessor(
+//			@Value("#{stepExecutionContext[fromId]}") String startId
+//			
+//	){
+//		return new ItemProcessor<SimpleRemotePartitioningBatchJobObject, SimpleRemotePartitioningBatchJobOutputObject>(){
+//			
+//			@Override
+//			public SimpleRemotePartitioningBatchJobOutputObject process(SimpleRemotePartitioningBatchJobObject item)
+//					throws Exception {
+//				SimpleRemotePartitioningBatchJobOutputObject obj = new SimpleRemotePartitioningBatchJobOutputObject();
+//				obj.setId(item.getId());
+//				obj.setContent(item.getContent());
+//				obj.setRunGroupName(executorId);
+//				System.out.println("id " + obj.getId() + " | content " + obj.getContent() + " | runId " + obj.getRunGroupName());
+//				Thread.sleep(100);
+//				return obj;
+//			}
+//			
+//		};
+//	}
 	
 	
 	@Bean @StepScope public JdbcBatchItemWriter<SimpleRemotePartitioningBatchJobOutputObject> itemWriter(

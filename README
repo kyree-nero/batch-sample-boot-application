@@ -4,6 +4,23 @@ The following technologies are used
 -Spring Batch
 -Stax
 
+
+docker build -f Dockerfile-activemq -t docker-amq . 
+docker run -it --publish=61616:61616  docker-amq:latest
+
+docker build -t docker-batch-db -f docker/Dockerfile.db .
+Run    docker run \
+			--name=docker-batch-db \
+			--publish=3306:3306  \
+			--network docker-simple-with-db-net  \
+			docker-simple-db:latest   
+
+docker run \
+			--name=docker-batch-db \ 
+			--publish=3306:3306  \
+			docker-batch-db:latest   
+			
+			
 Note: spring batch admin is deprecated so for the  
 ease of this example I've made exposed endoints to control the jobs
 

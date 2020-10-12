@@ -5,11 +5,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.integration.partition.BeanFactoryStepLocator;
 import org.springframework.batch.integration.partition.StepExecutionRequestHandler;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +26,9 @@ import org.springframework.integration.jms.ChannelPublishingJmsMessageListener;
 import org.springframework.integration.jms.JmsMessageDrivenEndpoint;
 import org.springframework.jms.listener.SimpleMessageListenerContainer;
 import org.springframework.messaging.PollableChannel;
+
+import sample.batch.domain.SimpleRemotePartitioningBatchJobObject;
+import sample.batch.domain.SimpleRemotePartitioningBatchJobOutputObject;
 
 @Configuration
 @EnableIntegration
@@ -77,5 +83,27 @@ public class SimpleBatchRemotePartitioningJobSlaveConfiguration {
 	
 	@Bean @Qualifier("executorId") public String executorId() { 
 		
-		String i = String.valueOf(executorIdCounter.incrementAndGet()); System.out.println("executorId " + i); return i; } 
+		String i = String.valueOf(executorIdCounter.incrementAndGet()); System.out.println("executorId " + i); return i; 
+	}
+	
+	@Bean @StepScope public ItemProcessor<SimpleRemotePartitioningBatchJobObject, SimpleRemotePartitioningBatchJobOutputObject> itemProcessor(
+			@Value("#{stepExecutionContext[fromId]}") String startId
+			
+	){
+		return new ItemProcessor<SimpleRemotePartitioningBatchJobObject, SimpleRemotePartitioningBatchJobOutputObject>(){
+			
+			@Override
+			public SimpleRemotePartitioningBatchJobOutputObject process(SimpleRemotePartitioningBatchJobObject item)
+					throws Exception {
+				SimpleRemotePartitioningBatchJobOutputObject obj = new SimpleRemotePartitioningBatchJobOutputObject();
+				obj.setId(item.getId());
+				obj.setContent(item.getContent());
+				obj.setRunGroupName(executorId());
+				System.out.println("id " + obj.getId() + " | content " + obj.getContent() + " | runId " + obj.getRunGroupName());
+				Thread.sleep(100);
+				return obj;
+			}
+			
+		};
+	}
 }

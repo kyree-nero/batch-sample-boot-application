@@ -31,9 +31,9 @@ public class BatchConfiguration {
 		return bean;
 	}
 	
-	@Bean public JobLauncher jobLauncher() throws Exception {
-		SimpleJobLauncher bean = new SimpleJobLauncher();
-		bean.setJobRepository(jobRepositoryFactoryBean().getObject());
-		return bean;
-	}
+//	@Bean public JobLauncher jobLauncher() throws Exception {
+//		SimpleJobLauncher bean = new SimpleJobLauncher();
+//		bean.setJobRepository(jobRepositoryFactoryBean().getObject());
+//		return bean;
+//	}
 } 
