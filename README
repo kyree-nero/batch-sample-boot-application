@@ -8,17 +8,36 @@ The following technologies are used
 docker build -f Dockerfile-activemq -t docker-amq . 
 docker run -it --publish=61616:61616  docker-amq:latest
 
-docker build -t docker-batch-db -f docker/Dockerfile.db .
+Run    docker network create --driver bridge app-batch-net
+RUn    docker build -t docker-batch-db -f docker/Dockerfile.db .
 Run    docker run \
 			--name=docker-batch-db \
 			--publish=3306:3306  \
-			--network docker-simple-with-db-net  \
-			docker-simple-db:latest   
-
-docker run \
-			--name=docker-batch-db \ 
-			--publish=3306:3306  \
+			--network app-batch-net  \
 			docker-batch-db:latest   
+
+Run    docker build -t docker-batch-jms -f docker/Dockerfile.jms .
+Run    docker run \
+			--name=docker-batch-jms \
+			--publish=61616:61616  \
+			--network app-batch-net  \
+			docker-batch-jms:latest   
+			
+Run    docker build -t docker-batch-master -f docker/Dockerfile.master.app .
+Run    docker run \
+			--name=docker-batch-master \
+			--publish=8080:8080  \
+			--network app-batch-net  \
+			docker-batch-master:latest   
+
+Run    docker build -t docker-batch-slave -f docker/Dockerfile.slave.app .
+Run    docker run \
+			--name=docker-batch-slave \
+			--publish=8081:8081  \
+			--network app-batch-net  \
+			docker-batch-slave:latest   
+			
+			
 			
 			
 Note: spring batch admin is deprecated so for the  
@@ -32,9 +51,3 @@ http://localhost:8080/app/batch/simplebatchjob/start
 http://localhost:8080/app/batch/simplepartitioningbatchjob/start
 http://localhost:8080/app/batch/simpleremotepartitioningbatchjob/start
 
-Note.  to do the remote partition job both the master and slave binary need to be deployed to a container with a separate 
-context root so they do not collide.
-The test data also needs to be in the table (see the .sql files in test)
-
-Note.   This uses activemq (standalone) on its default port for the run time to work.  You need to setup one queue called batchQueue.  
-In test nothing is needed.
