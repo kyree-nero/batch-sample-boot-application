@@ -33,7 +33,7 @@ import sample.batch.domain.SimpleRemotePartitioningBatchJobOutputObject;
 @Configuration
 @EnableIntegration
 @Profile({"slave"})
-@Import(SimpleBatchRemotePartitioningJobCommonConfiguration.class)
+//@Import(SimpleBatchRemotePartitioningJobCommonConfiguration.class)
 public class SimpleBatchRemotePartitioningJobSlaveConfiguration {
 	@Autowired ConnectionFactory connectionFactory;
 	@Autowired Destination inboundRequestsDestination;
