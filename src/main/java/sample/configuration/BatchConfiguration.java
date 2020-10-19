@@ -14,11 +14,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @EnableBatchProcessing
-@Import(
-	{
-		SimpleBatchJobConfiguration.class, 
-	}
-)
+//@Import(
+//	{
+//		SimpleBatchJobConfiguration.class, 
+//	}
+//)
 
 public class BatchConfiguration {
 	@Autowired DataSource dataSource;
@@ -31,9 +31,4 @@ public class BatchConfiguration {
 		return bean;
 	}
 	
-//	@Bean public JobLauncher jobLauncher() throws Exception {
-//		SimpleJobLauncher bean = new SimpleJobLauncher();
-//		bean.setJobRepository(jobRepositoryFactoryBean().getObject());
-//		return bean;
-//	}
 } 
